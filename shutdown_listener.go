@@ -18,15 +18,15 @@ type ShutdownListener struct {
 }
 
 func NewShutdownListener(shutdown func()) *ShutdownListener {
-	channel := make(chan os.Signal, 2)
+	channel := make(chan os.Signal, 16)
 	signal.Notify(channel, os.Interrupt, syscall.SIGTERM)
 
 	return &ShutdownListener{channel: channel, shutdown: shutdown}
 }
 
 func (this *ShutdownListener) Listen() {
-	if <-this.channel != nil {
-		this.logger.Println("[INFO] Received OS shutdown signal.")
+	if message := <-this.channel; message != nil {
+		this.logger.Printf("[INFO] Received application shutdown signal [%s].\n", message)
 	}
 
 	this.shutdown()

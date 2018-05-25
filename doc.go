@@ -17,4 +17,5 @@ type ListenCloser interface {
 type WaitGroup interface {
 	Add(delta int)
 	Done()
+	Wait()
 }

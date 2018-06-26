@@ -6,6 +6,7 @@ type WaitGroupListener struct {
 }
 
 func NewWaitGroupListener(listener Listener, waiter WaitGroup) *WaitGroupListener {
+	waiter.Add(1)
 	return &WaitGroupListener{
 		inner:  listener,
 		waiter: waiter,
@@ -13,12 +14,9 @@ func NewWaitGroupListener(listener Listener, waiter WaitGroup) *WaitGroupListene
 }
 
 func (this *WaitGroupListener) Listen() {
-	if this.inner == nil {
-		return
+	if this.inner != nil {
+		this.inner.Listen()
 	}
-
-	this.waiter.Add(1)
-	this.inner.Listen()
 	this.waiter.Done()
 }
 

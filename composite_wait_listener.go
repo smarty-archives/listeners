@@ -1,6 +1,9 @@
 package listeners
 
-import "sync"
+import (
+	"io"
+	"sync"
+)
 
 type CompositeWaitListener struct {
 	mutex  sync.Once
@@ -47,6 +50,8 @@ func (this *CompositeWaitListener) Close() {
 func (this *CompositeWaitListener) close() {
 	for _, item := range this.items {
 		if closer, ok := item.(ListenCloser); ok {
+			closer.Close()
+		} else if closer, ok := item.(io.Closer); ok {
 			closer.Close()
 		}
 	}

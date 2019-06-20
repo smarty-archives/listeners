@@ -3,6 +3,7 @@ package listeners
 import (
 	"io"
 	"sync"
+	"time"
 )
 
 type CompositeWaitListener struct {
@@ -15,6 +16,20 @@ func NewCompositeWaitShutdownListener(listeners ...Listener) *CompositeWaitListe
 	this := NewCompositeWaitListener()
 	this.items = []Listener{NewShutdownListener(this.Close)}
 	this.items = append(this.items, listeners...)
+	return this
+}
+
+func NewCompositeWaitDelayedShutdownListener(shutdownDelay time.Duration, listeners ...Listener) *CompositeWaitListener {
+	this := NewCompositeWaitShutdownListener(listeners...)
+	if sl, ok := this.items[0].(*ShutdownListener); ok {
+		sl.shutdown = func() {
+			if shutdownDelay.Nanoseconds() > 0 {
+				sl.logger.Printf("[INFO] Shutdown delay [%s].\n", shutdownDelay)
+				time.Sleep(shutdownDelay)
+			}
+			this.Close() //default shutdown() in NewCompositeWaitShutdownListener()
+		}
+	}
 	return this
 }
 

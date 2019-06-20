@@ -1,9 +1,11 @@
 package listeners
 
 import (
+	"github.com/smartystreets/logging"
 	"io/ioutil"
 	"log"
 	"os"
+	"syscall"
 	"testing"
 	"time"
 
@@ -84,6 +86,31 @@ func (this *CompositeWaitListenerFixture) TestCloseDoesntInvokeInfiniteLoop() {
 	go this.listener.Close()
 	this.listener.Listen()
 
+	for _, item := range this.items {
+		this.So(item.(*FakeListener).closeCalls, should.Equal, 1)
+	}
+}
+
+func (this *CompositeWaitListenerFixture) TestDelayedCloseDoesDelay() {
+	delay := 50 * time.Millisecond
+	this.listener = NewCompositeWaitDelayedShutdownListener(delay, this.items...)
+	this.listener.items[0].(*ShutdownListener).logger = logging.Capture()
+
+	start := time.Now()
+	go this.listener.Listen()
+	time.Sleep(time.Millisecond) //Listen() needs to execute before kill or we'll get instant fail (empty WaitGroup)
+	_ = syscall.Kill(syscall.Getpid(), syscall.SIGTERM)
+
+	//pre-delay
+	for _, item := range this.items {
+		this.So(item.(*FakeListener).closeCalls, should.Equal, 0)
+	}
+
+	this.listener.waiter.Wait()
+	elapsed := time.Since(start)
+	this.So(elapsed.Nanoseconds(), should.BeGreaterThanOrEqualTo, delay.Nanoseconds())
+
+	//post-delay
 	for _, item := range this.items {
 		this.So(item.(*FakeListener).closeCalls, should.Equal, 1)
 	}

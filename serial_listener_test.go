@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/smartystreets/assertions/should"
-	"github.com/smartystreets/clock"
 	"github.com/smartystreets/gunit"
 )
 
@@ -19,9 +18,9 @@ type SerialListenerFixture struct {
 
 func (this *SerialListenerFixture) TestListenCallInOrder() {
 	items := []Listener{
-		&FakeForSerialListener{listened: clock.UTCNow().Add(time.Second)},
-		&FakeForSerialListener{listened: clock.UTCNow()},
-		&FakeForSerialListener{listened: clock.UTCNow().Add(-time.Second)},
+		&FakeForSerialListener{listened: utcNow().Add(time.Second)},
+		&FakeForSerialListener{listened: utcNow()},
+		&FakeForSerialListener{listened: utcNow().Add(-time.Second)},
 	}
 
 	NewSerialListener(items...).Listen()
@@ -61,7 +60,7 @@ type FakeForSerialListener struct {
 
 func (this *FakeForSerialListener) Listen() {
 	this.calls++
-	this.listened = clock.UTCNow()
+	this.listened = utcNow()
 	time.Sleep(time.Microsecond)
 }
 

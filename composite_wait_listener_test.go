@@ -1,7 +1,6 @@
 package listeners
 
 import (
-	"github.com/smartystreets/logging"
 	"io/ioutil"
 	"log"
 	"os"
@@ -9,8 +8,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/smartystreets/logging"
+
 	"github.com/smartystreets/assertions/should"
-	"github.com/smartystreets/clock"
 	"github.com/smartystreets/gunit"
 )
 
@@ -41,7 +41,7 @@ func (this *CompositeListenerFixture) Teardown() {
 func (this *CompositeWaitListenerFixture) TestAllListenersAreCalledAndWaitedFor() {
 	this.listener.Listen()
 
-	this.completed = clock.UTCNow()
+	this.completed = utcNow()
 
 	for _, item := range this.items {
 		if item == nil {
@@ -125,7 +125,7 @@ type FakeListener struct {
 }
 
 func (this *FakeListener) Listen() {
-	this.instant = clock.UTCNow()
+	this.instant = utcNow()
 	time.Sleep(time.Millisecond)
 	this.calls++
 }

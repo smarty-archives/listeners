@@ -6,7 +6,6 @@ import (
 
 	"github.com/smartystreets/assertions/should"
 	"github.com/smartystreets/gunit"
-	"github.com/smartystreets/logging"
 )
 
 func TestShutdownListenerFixture(t *testing.T) {
@@ -22,7 +21,6 @@ type ShutdownListenerFixture struct {
 
 func (this *ShutdownListenerFixture) Setup() {
 	this.listener = NewShutdownListener(func() { this.calls++ })
-	this.listener.logger = logging.Capture()
 }
 
 func (this *ShutdownListenerFixture) TestShutdownSignalInvokesShutdownCallback() {

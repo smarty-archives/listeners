@@ -1,16 +1,14 @@
 package listeners
 
 import (
+	"log"
 	"os"
 	"os/signal"
 	"sync"
 	"syscall"
-
-	"github.com/smartystreets/logging"
 )
 
 type ShutdownListener struct {
-	logger *logging.Logger
 
 	mutex    sync.Once
 	channel  chan os.Signal
@@ -26,7 +24,7 @@ func NewShutdownListener(shutdown func()) *ShutdownListener {
 
 func (this *ShutdownListener) Listen() {
 	if message := <-this.channel; message != nil {
-		this.logger.Printf("[INFO] Received application shutdown signal [%s].\n", message)
+		log.Printf("[INFO] Received application shutdown signal [%s].\n", message)
 	}
 
 	this.shutdown()
@@ -39,5 +37,5 @@ func (this *ShutdownListener) Close() {
 func (this *ShutdownListener) close() {
 	signal.Stop(this.channel)
 	close(this.channel)
-	this.logger.Println("[INFO] Unsubscribed from further application shutdown signals.")
+	log.Println("[INFO] Unsubscribed from further application shutdown signals.")
 }

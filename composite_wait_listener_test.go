@@ -8,8 +8,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/smartystreets/logging"
-
 	"github.com/smartystreets/assertions/should"
 	"github.com/smartystreets/gunit"
 )
@@ -94,7 +92,6 @@ func (this *CompositeWaitListenerFixture) TestCloseDoesntInvokeInfiniteLoop() {
 func (this *CompositeWaitListenerFixture) TestDelayedCloseDoesDelay() {
 	delay := 50 * time.Millisecond
 	this.listener = NewCompositeWaitDelayedShutdownListener(delay, this.items...)
-	this.listener.items[0].(*ShutdownListener).logger = logging.Capture()
 
 	start := time.Now()
 	go this.listener.Listen()

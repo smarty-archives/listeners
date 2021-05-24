@@ -2,6 +2,7 @@ package listeners
 
 import (
 	"io"
+	"log"
 	"sync"
 	"time"
 )
@@ -24,7 +25,7 @@ func NewCompositeWaitDelayedShutdownListener(shutdownDelay time.Duration, listen
 	if sl, ok := this.items[0].(*ShutdownListener); ok {
 		sl.shutdown = func() {
 			if shutdownDelay.Nanoseconds() > 0 {
-				sl.logger.Printf("[INFO] Shutdown delay [%s].\n", shutdownDelay)
+				log.Printf("[INFO] Shutdown delay [%s].\n", shutdownDelay)
 				time.Sleep(shutdownDelay)
 			}
 			this.Close() //default shutdown() in NewCompositeWaitShutdownListener()

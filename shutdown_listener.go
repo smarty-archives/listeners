@@ -9,7 +9,6 @@ import (
 )
 
 type ShutdownListener struct {
-
 	mutex    sync.Once
 	channel  chan os.Signal
 	shutdown func()

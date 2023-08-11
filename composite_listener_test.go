@@ -4,8 +4,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/smartystreets/assertions/should"
-	"github.com/smartystreets/gunit"
+	"github.com/smarty/assertions/should"
+	"github.com/smarty/gunit"
 )
 
 func TestCompositeListenerFixture(t *testing.T) {
@@ -77,7 +77,7 @@ func (this *FakeForCompositeListener) Close() {
 	this.closeCalls++
 }
 
-////////////////////////////////////////////////////////////////////////////////
+// //////////////////////////////////////////////////////////////////////////////
 func utcNow() time.Time {
 	return time.Now().UTC()
 }
